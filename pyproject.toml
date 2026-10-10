@@ -1,0 +1,19 @@
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
+pythonpath = ["python"]
+addopts = "--strict-markers --junitxml=reports/junit.xml"
+markers = [
+  "smoke: basic communication", "state: state machine",
+  "link: optical link and instruments", "thermal: temperature interlocks",
+  "fault: fault injection", "timeout: deadlines and transport failures",
+  "recovery: reset and fault recovery", "robustness: malformed and boundary inputs",
+  "concurrency: simultaneous clients"
+]
+[tool.black]
+line-length = 100
+extend-exclude = "generated/"
+[tool.ruff]
+line-length = 100
+extend-exclude = ["python/halt/generated"]
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]

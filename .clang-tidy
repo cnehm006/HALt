@@ -1,0 +1,4 @@
+# Keep enums int-sized so unknown protobuf values cannot wrap into valid byte values.
+Checks: '-*,clang-analyzer-*,bugprone-*,performance-*,modernize-use-nullptr,-bugprone-easily-swappable-parameters,-performance-enum-size'
+WarningsAsErrors: '*'
+HeaderFilterRegex: 'cpp/include/halt/.*'

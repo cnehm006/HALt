@@ -1,0 +1,33 @@
+syntax = "proto3";
+package halt.rpc;
+
+enum State { POWERED_OFF = 0; BOOTING = 1; STANDBY = 2; INITIALIZING = 3; READY = 4; DEGRADED = 5; FAULT = 6; RECOVERING = 7; }
+enum Mode { NORMAL = 0; SAFE = 1; }
+enum Fault { NONE = 0; SENSOR_FAILURE = 1; COMMUNICATION_TIMEOUT = 2; OVER_TEMPERATURE = 3; INVALID_TELEMETRY = 4; LASER_FAULT = 5; POWER_SUPPLY_FAULT = 6; }
+enum Channel { TX = 0; RX = 1; }
+message Empty {}
+message Pong { string identity = 1; }
+message Status { State state = 1; Mode mode = 2; Fault fault = 3; bool link_up = 4; bool tx_enabled = 5; uint64 uptime_ms = 6; repeated string alarms = 7; }
+message Telemetry { Status status = 1; double voltage_v = 2; double module_temperature_c = 3; double laser_temperature_c = 4; double tx_power_dbm = 5; double rx_power_dbm = 6; double bias_current_ma = 7; bool valid = 8; }
+message ModeRequest { Mode mode = 1; }
+message FaultRequest { Fault fault = 1; }
+message Scalar { double value = 1; }
+message MeterRequest { Channel channel = 1; double noise_stddev_db = 2; bool simulate_timeout = 3; bool simulate_error = 4; }
+message Reading { double power_dbm = 1; string instrument = 2; }
+message Event { uint64 sequence = 1; string timestamp = 2; string level = 3; string component = 4; string message = 5; }
+message Events { repeated Event events = 1; }
+service DeviceControl {
+  rpc Ping(Empty) returns (Pong);
+  rpc GetStatus(Empty) returns (Status);
+  rpc GetTelemetry(Empty) returns (Telemetry);
+  rpc SetMode(ModeRequest) returns (Status);
+  rpc EnableTransmitter(Empty) returns (Status);
+  rpc DisableTransmitter(Empty) returns (Status);
+  rpc Reset(Empty) returns (Status);
+  rpc InjectFault(FaultRequest) returns (Status);
+  rpc ClearFault(Empty) returns (Status);
+  rpc SetAttenuation(Scalar) returns (Status);
+  rpc SetTemperature(Scalar) returns (Status);
+  rpc MeasurePower(MeterRequest) returns (Reading);
+  rpc GetEvents(Empty) returns (Events);
+}

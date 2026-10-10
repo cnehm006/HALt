@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="HALt local firmware and instrumentation validation console. Generic simulated optical communications module."
+    />
+    <title>HALt · Lab console</title>
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to console</a>
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="HALt workbench"
+        >HAL<span>t</span><span class="brand-rule"></span
+      ></a>
+      <div class="identity">
+        <strong>Hardware Abstraction Layer Tester</strong
+        ><span>Embedded firmware test &amp; instrumentation harness</span>
+      </div>
+      <div class="environment">
+        <span class="tag">SIMULATED HARDWARE</span
+        ><span id="connection" class="connection">Connecting…</span>
+      </div>
+    </header>
+    <nav class="navigation" aria-label="Main navigation">
+      <a href="/" data-route="workbench">01 <span>Workbench</span></a>
+      <a href="/validation" data-route="validation"
+        >02 <span>Validation</span
+        ><span id="nav-running" hidden>RUNNING</span></a
+      >
+      <a href="/architecture" data-route="architecture"
+        >03 <span>Architecture</span></a
+      >
+      <span class="nav-right"
+        >C++ · Python · gRPC · pytest · CMake · Bash · GitHub Actions</span
+      >
+    </nav>
+    <main id="main">
+      <div
+        id="notice"
+        class="notice"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
+      <div id="lease-banner" class="lease-banner" hidden>
+        Validation owns this device. Manual controls are locked; live
+        observations remain available. <a href="/validation">View run →</a>
+      </div>
+
+      <section id="workbench" data-page="workbench">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">LOCAL LAB / DEVICE 01</p>
+            <h1>Optical module workbench</h1>
+            <p>
+              Automated firmware and instrumentation validation against a
+              simulated optical communications module.
+            </p>
+          </div>
+          <div class="sample-stamp">
+            <span>LAST SAMPLE</span
+            ><strong id="sample-time">Awaiting device</strong>
+          </div>
+        </div>
+        <div class="status-strip" aria-label="Device status">
+          <div>
+            <span>DEVICE STATE</span><strong id="device-state">—</strong>
+          </div>
+          <div><span>RECEIVE LINK</span><strong id="link-state">—</strong></div>
+          <div>
+            <span>OPERATING MODE</span><strong id="device-mode">—</strong>
+          </div>
+          <div><span>UPTIME</span><strong id="uptime">—</strong></div>
+          <div><span>FAULT STATE</span><strong id="fault-state">—</strong></div>
+        </div>
+        <div class="work-grid">
+          <div class="observations">
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Telemetry</h2>
+                <span id="telemetry-valid" class="quiet">Awaiting sample</span>
+              </div>
+              <table class="telemetry-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Measurement</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Model reference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Module temperature</th>
+                    <td data-field="module_temperature_c">—</td>
+                    <td>°C</td>
+                    <td>Alarm ≥ 85 °C</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Laser temperature</th>
+                    <td data-field="laser_temperature_c">—</td>
+                    <td>°C</td>
+                    <td>Module + 3 °C with TX on</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Supply voltage</th>
+                    <td data-field="voltage_v">—</td>
+                    <td>V</td>
+                    <td>Nominal 3.30 V</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">TX optical power</th>
+                    <td data-field="tx_power_dbm">—</td>
+                    <td>dBm</td>
+                    <td>0 dBm on / −80 dBm off</td>
+                  </tr>
+                  <tr class="highlight-row">
+                    <th scope="row">RX optical power</th>
+                    <td data-field="rx_power_dbm">—</td>
+                    <td>dBm</td>
+                    <td>Loss of signal &lt; −20 dBm</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Laser bias current</th>
+                    <td data-field="bias_current_ma">—</td>
+                    <td>mA</td>
+                    <td>35 mA with TX on</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="alarm-row">
+                <span>ACTIVE ALARMS</span
+                ><strong id="alarms">Awaiting device</strong>
+              </div>
+            </section>
+            <section class="panel trace-panel">
+              <div class="section-heading">
+                <h2>Receive path</h2>
+                <span class="quiet">Live samples · last 90 observations</span>
+              </div>
+              <div class="trace-legend">
+                <span><i class="trace-key"></i> RX power</span
+                ><span><i class="threshold-key"></i> LOS threshold −20 dBm</span
+                ><strong id="rx-margin">— dB margin</strong>
+              </div>
+              <svg
+                id="trace"
+                viewBox="0 0 660 154"
+                role="img"
+                aria-labelledby="trace-title trace-description"
+              >
+                <title id="trace-title">Recent RX optical power</title>
+                <desc id="trace-description">
+                  Live samples only. Dashed line marks the minus 20 dBm
+                  loss-of-signal threshold.
+                </desc>
+                <line class="grid-line" x1="48" y1="16" x2="644" y2="16" />
+                <line class="threshold-line" x1="48" y1="51" x2="644" y2="51" />
+                <line class="grid-line" x1="48" y1="134" x2="644" y2="134" />
+                <text x="5" y="20">0</text>
+                <text x="5" y="55">−20</text>
+                <text x="5" y="138">−65</text>
+                <polyline id="rx-trace" points="" />
+                <text id="trace-empty" x="235" y="95">
+                  Waiting for live samples
+                </text>
+              </svg>
+              <p class="footnote">
+                RX = −5 dBm − attenuation. Receive link is independent of local
+                TX.
+              </p>
+            </section>
+          </div>
+          <aside class="controls" aria-label="Device and instrument controls">
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Device control</h2>
+                <span id="tx-state" class="quiet">TX —</span>
+              </div>
+              <div class="button-row">
+                <button class="primary control" data-command="enable_tx">
+                  Enable TX</button
+                ><button class="control" data-command="disable_tx">
+                  Disable TX
+                </button>
+              </div>
+              <div class="button-row secondary-row">
+                <button class="control" data-mode="NORMAL">Normal mode</button
+                ><button class="control" data-mode="SAFE">Safe mode</button
+                ><button class="control" data-command="reset">Reset</button>
+              </div>
+              <p class="footnote">
+                Faults inhibit TX. Recovery never re-enables it automatically.
+              </p>
+            </section>
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Instrumentation</h2>
+                <span class="quiet">Simulated</span>
+              </div>
+              <form id="attenuation-form" class="inline-form">
+                <label for="attenuation"
+                  >Optical attenuation <span>0–60 dB</span></label
+                >
+                <div>
+                  <input
+                    class="control"
+                    id="attenuation"
+                    type="number"
+                    min="0"
+                    max="60"
+                    step="0.001"
+                    value="0"
+                    required
+                  /><span class="unit">dB</span
+                  ><button class="control" type="submit">Apply</button>
+                </div>
+              </form>
+              <form id="temperature-form" class="inline-form">
+                <label for="temperature"
+                  >Module temperature <span>−40–125 °C</span></label
+                >
+                <div>
+                  <input
+                    class="control"
+                    id="temperature"
+                    type="number"
+                    min="-40"
+                    max="125"
+                    step="0.001"
+                    value="25"
+                    required
+                  /><span class="unit">°C</span
+                  ><button class="control" type="submit">Apply</button>
+                </div>
+              </form>
+              <details class="meter-details" open>
+                <summary>Optical power meter</summary>
+                <form id="meter-form">
+                  <div class="meter-fields">
+                    <label
+                      >Channel<select id="meter-channel" class="control">
+                        <option>RX</option>
+                        <option>TX</option>
+                      </select></label
+                    ><label
+                      >Noise σ (dB)<input
+                        class="control"
+                        id="meter-noise"
+                        type="number"
+                        value="0"
+                        min="0"
+                        max="2"
+                        step="0.01"
+                        required
+                    /></label>
+                  </div>
+                  <div class="meter-fields">
+                    <label
+                      >Instrument behavior<select
+                        class="control"
+                        id="meter-behavior"
+                      >
+                        <option value="normal">Normal</option>
+                        <option value="timeout">Simulate timeout</option>
+                        <option value="error">Simulate error</option>
+                      </select></label
+                    ><button class="control" type="submit">Measure</button>
+                  </div>
+                </form>
+                <output id="meter-reading">No measurement taken</output>
+              </details>
+            </section>
+            <section class="panel fault-panel">
+              <div class="section-heading">
+                <h2>Fault injection</h2>
+                <span class="quiet">Test capability</span>
+              </div>
+              <form id="fault-form">
+                <label class="sr-only" for="fault">Fault type</label
+                ><select class="control" id="fault">
+                  <option value="SENSOR_FAILURE">Sensor failure</option>
+                  <option value="COMMUNICATION_TIMEOUT">
+                    Communication timeout
+                  </option>
+                  <option value="OVER_TEMPERATURE">Overtemperature</option>
+                  <option value="INVALID_TELEMETRY">Invalid telemetry</option>
+                  <option value="LASER_FAULT">Laser fault</option>
+                  <option value="POWER_SUPPLY_FAULT">Power supply fault</option>
+                </select>
+                <div class="button-row">
+                  <button class="danger control" type="submit">
+                    Inject fault</button
+                  ><button
+                    class="control"
+                    type="button"
+                    data-command="clear_fault"
+                  >
+                    Clear fault
+                  </button>
+                </div>
+              </form>
+            </section>
+          </aside>
+        </div>
+        <section class="panel events-panel">
+          <div class="section-heading">
+            <h2>Device event log</h2>
+            <div class="log-tools">
+              <label for="log-level" class="sr-only">Filter log level</label
+              ><select id="log-level">
+                <option value="all">All levels</option>
+                <option value="WARN">Warnings</option>
+                <option value="INFO">Information</option></select
+              ><label
+                ><input id="log-follow" type="checkbox" checked /> Follow</label
+              ><button id="download-events">Export JSON</button>
+            </div>
+          </div>
+          <p class="log-meta" id="log-meta">Waiting for simulator events.</p>
+          <div
+            id="event-log"
+            class="event-log"
+            role="log"
+            aria-live="off"
+            aria-label="Actual simulator event log"
+          ></div>
+        </section>
+      </section>
+
+      <section id="validation" data-page="validation" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">EXECUTION / EVIDENCE</p>
+            <h1>Firmware validation</h1>
+            <p>
+              Run pytest against the live C++ module. Inspect results, failure
+              details, and original artifacts.
+            </p>
+          </div>
+          <span class="tag">REAL EXECUTION</span>
+        </div>
+        <section class="panel suite-panel">
+          <div class="section-heading">
+            <h2>Select a validation suite</h2>
+            <span class="quiet">One exclusive run at a time</span>
+          </div>
+          <div class="suite-buttons">
+            <button data-suite="smoke">Smoke tests</button
+            ><button data-suite="link">Link tests</button
+            ><button data-suite="thermal">Thermal tests</button
+            ><button data-suite="fault">Fault tests</button
+            ><button data-suite="recovery">Recovery tests</button
+            ><button class="primary" data-suite="full">Full validation</button>
+          </div>
+          <p class="footnote">
+            Each case resets device conditions. Tests run on the workbench
+            module; the final state is preserved for inspection. A run has a
+            180-second limit.
+          </p>
+        </section>
+        <div class="validation-grid">
+          <section class="panel run-panel">
+            <div class="section-heading">
+              <h2>Run results</h2>
+              <button id="cancel-run" hidden>Cancel run</button>
+            </div>
+            <div id="run-empty" class="empty-state">
+              <span class="empty-mark">[ — ]</span>
+              <h3>No validation selected</h3>
+              <p>
+                Choose a suite to collect measured results.<br />No tests run
+                automatically on page load.
+              </p>
+            </div>
+            <div id="run-content" hidden>
+              <div class="run-overview">
+                <div>
+                  <span id="run-badge" class="tag">—</span>
+                  <h3 id="run-title">—</h3>
+                  <p id="run-time" class="quiet"></p>
+                </div>
+                <strong id="run-progress">—</strong>
+              </div>
+              <progress
+                id="run-bar"
+                max="1"
+                value="0"
+                aria-label="Validation progress"
+              ></progress>
+              <div id="run-counts" class="run-counts"></div>
+              <p id="run-error" class="error-text" hidden></p>
+              <div class="results-scroll">
+                <table class="results-table">
+                  <thead>
+                    <tr>
+                      <th>Status</th>
+                      <th>Test case</th>
+                      <th>Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody id="test-results"></tbody>
+                </table>
+              </div>
+              <div class="artifact-row" id="artifacts"></div>
+              <details class="provenance">
+                <summary>Run provenance &amp; traceability</summary>
+                <dl id="run-provenance"></dl>
+                <p class="footnote">
+                  Fingerprints identify the source and executable used. They are
+                  not a signature or proof of reproducible compilation.
+                </p>
+              </details>
+            </div>
+          </section>
+          <aside class="panel history-panel">
+            <div class="section-heading">
+              <h2>Recent runs</h2>
+              <span class="quiet">Latest 20</span>
+            </div>
+            <div id="run-history">
+              <p class="empty-small">No runs recorded.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="architecture" data-page="architecture" hidden>
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">SYSTEM / DESIGN NOTES</p>
+            <h1>A thin console. A real test harness.</h1>
+            <p>
+              The browser observes and operates the engineering system. Device
+              behavior lives in C++.
+            </p>
+          </div>
+          <a class="button-link" href="/readme" target="_blank" rel="noopener"
+            >Read README ↗</a
+          >
+        </div>
+        <div class="architecture-grid">
+          <section class="panel architecture-flow">
+            <div class="section-heading">
+              <h2>Control &amp; observation path</h2>
+              <span class="quiet">Process boundaries</span>
+            </div>
+            <ol class="flow">
+              <li>
+                <span>01</span>
+                <div>
+                  <strong>Browser</strong>
+                  <p>
+                    Plain HTML, CSS, and JavaScript. One-second sampling; no
+                    synthetic telemetry.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <strong>Python HTTP API</strong>
+                  <p>
+                    Loopback-only FastAPI service. Input validation, session
+                    protection, and exclusive test ownership.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <strong>Python test harness</strong>
+                  <p>
+                    pytest runs in a supervised child process. Live phase
+                    reports, JUnit XML, and bounded execution.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>04</span>
+                <div>
+                  <strong>gRPC / Protocol Buffers</strong>
+                  <p>
+                    Typed commands and telemetry. Explicit RPC deadlines. No
+                    Python imports of simulator internals.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>05</span>
+                <div>
+                  <strong>C++ hardware abstraction layer</strong>
+                  <p>
+                    IDevice and ITelemetryProvider separate control code from
+                    the simulator implementation.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>06</span>
+                <div>
+                  <strong>Generic optical module &amp; instruments</strong>
+                  <p>
+                    Synchronized state machine, periodic telemetry, optical
+                    power meter, attenuation, and thermal inputs.
+                  </p>
+                </div>
+              </li>
+            </ol>
+            <p class="footnote">
+              Manual commands go directly from the API to gRPC. Validation goes
+              through the Python harness and then the same gRPC service.
+            </p>
+          </section>
+          <div>
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Behavior worth inspecting</h2>
+              </div>
+              <ul class="engineering-notes">
+                <li>
+                  <strong>Boundary conditions</strong>
+                  <p>
+                    RX at −20 dBm remains valid; below it asserts loss of
+                    signal. Thermal protection trips at 85 °C.
+                  </p>
+                </li>
+                <li>
+                  <strong>Recovery with an interlock</strong>
+                  <p>
+                    Cooling does not acknowledge a latched fault. Clearing a
+                    fault does not automatically enable TX.
+                  </p>
+                </li>
+                <li>
+                  <strong>Timeout isolation</strong>
+                  <p>
+                    A delayed telemetry call cannot hold the device lock or
+                    prevent recovery commands.
+                  </p>
+                </li>
+                <li>
+                  <strong>Coherent snapshots</strong>
+                  <p>
+                    State and telemetry share a mutex. Concurrent reads cannot
+                    observe TX enabled with disabled-TX power.
+                  </p>
+                </li>
+              </ul>
+            </section>
+            <section class="panel">
+              <div class="section-heading">
+                <h2>Verification, without overclaiming</h2>
+              </div>
+              <p>
+                C++ GoogleTest checks deterministic components. Python checks
+                the complete compiled service. CI is configured for Ubuntu and
+                Windows, with Linux static analysis and sanitizers.
+              </p>
+              <p>
+                This console reports local execution only. It does not claim
+                hosted CI has passed or that physical hardware has been
+                validated.
+              </p>
+              <p id="source-link">
+                GitHub source: not configured for this local checkout.
+              </p>
+              <a href="/readme" target="_blank" rel="noopener"
+                >Build instructions, test strategy &amp; limitations ↗</a
+              >
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <span>HALt / Engineering validation environment</span
+      ><span
+        >Generic simulated optical communications module. No proprietary
+        hardware or protocols.</span
+      >
+    </footer>
+  </body>
+</html>
