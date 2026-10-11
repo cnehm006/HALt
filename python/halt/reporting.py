@@ -1,4 +1,4 @@
-"""pytest plugin: append real phase results for the local web console."""
+"""Write pytest phase results for the web console."""
 
 import json
 import os

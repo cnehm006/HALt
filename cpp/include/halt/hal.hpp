@@ -2,7 +2,7 @@
 #include "halt/types.hpp"
 
 namespace halt {
-// The service depends on this contract, never on SimulatedDevice internals.
+// Device commands exposed to the service.
 class ITelemetryProvider {
 public:
   virtual ~ITelemetryProvider() = default;
@@ -16,7 +16,7 @@ public:
   virtual void inject_fault(Fault fault) = 0;
   virtual void clear_fault() = 0;
 };
-// Simulator-only environmental inputs are deliberately separate from device control.
+// Lab settings are separate from device commands.
 class ISimulatedEnvironment {
 public:
   virtual ~ISimulatedEnvironment() = default;

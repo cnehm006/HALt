@@ -29,7 +29,7 @@ void SimulatedDevice::transition(State next) {
 }
 void SimulatedDevice::reset() {
   std::lock_guard<std::mutex> lock(mutex_);
-  // External lab conditions persist across reset; an unsafe environment cannot be bypassed.
+  // Reset leaves temperature and attenuation unchanged.
   data_.fault = Fault::None;
   data_.mode = Mode::Normal;
   data_.tx_enabled = false;
@@ -151,7 +151,7 @@ void SimulatedDevice::update() {
   data_.laser_temperature_c = data_.module_temperature_c + (data_.tx_enabled ? 3.0 : 0.0);
   data_.link_up = data_.state == State::Ready && data_.mode == Mode::Normal &&
                   data_.rx_power_dbm >= kLosThresholdDbm;
-  // Deliberately corrupt a field, with validity and interlock asserted independently.
+  // Fault injection changes the reading as well as the validity and interlock flags.
   if (data_.fault == Fault::InvalidTelemetry)
     data_.voltage_v = std::numeric_limits<double>::quiet_NaN();
   if (data_.fault == Fault::SensorFailure)

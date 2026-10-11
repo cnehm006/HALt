@@ -168,7 +168,7 @@ function showSnapshot(data) {
     data.telemetry?.valid && typeof rx === "number" ? rx : null,
   );
   if (state.samples.length > 90) state.samples.shift();
-  // Separate polylines at missing samples; never bridge a transport failure with fabricated data.
+  // Leave gaps in the chart where samples are missing.
   $$("#trace .sample-segment").forEach((node) => node.remove());
   let points = [];
   const flush = () => {
@@ -508,7 +508,7 @@ $$("[data-suite]").forEach((button) =>
       renderRun(run);
       lockControls();
     } catch {
-      /* action() displays the actual server error. */
+      /* action() already displays the server error. */
     }
   }),
 );

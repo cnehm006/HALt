@@ -42,7 +42,7 @@ def digest(path):
 
 
 def source_digest():
-    """Identify actual source, including uncommitted changes; not just a Git revision."""
+    """Hash source files, including uncommitted changes."""
     result = hashlib.sha256()
     paths = [ROOT / "CMakeLists.txt", ROOT / "pyproject.toml", ROOT / "requirements-dev.txt"]
     for directory in ("cpp", "proto", "python", "tests/cpp"):
