@@ -7,6 +7,7 @@ alwaysApply: true
 
 - After each completed change, run the relevant checks, commit the scoped project changes, and push the current branch to `origin` before ending the task.
 - This is the user's standing authorization; do not ask again for routine commits and pushes.
+- Write README prose and commit messages in a plain, natural voice. Use short, specific commit subjects describing the change; avoid promotional language, phase summaries, and canned wording. Keep technical claims accurate and do not invent personal experience.
 - Keep secrets, local environments, build outputs, and generated reports out of commits. Respect `.gitignore`.
 - Preserve unrelated work. Never force-push or discard changes to make a push succeed.
 - Verify that the remote branch contains the local commit. Report any failed check or blocked push accurately; never claim synchronization without verification.
